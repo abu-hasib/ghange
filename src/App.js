@@ -3,7 +3,7 @@ import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
 
-const BASE_URL = "https://fakestoreapi.com/products/";
+const BASE_URL = "https://fakestoreapi.herokuapp.com/products/";
 
 class App extends React.Component {
   componentDidMount() {
@@ -134,7 +134,7 @@ const Product = ({
     <p>{category}</p>
     <p>{description}</p>
     <p>{formatPrice(price)}</p>
-    <img src={image} alt={title} className="App-logo" />
+    <img src={image.replace('https://fakestoreapi.com/', 'https://fakestoreapi.herokuapp.com/')} alt={title} className="App-logo" />
     <Button onClick={addToCart}>Add to Cart</Button>
   </div>
 );
