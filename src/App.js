@@ -1,9 +1,11 @@
 import Axios from "axios";
 import React from "react";
-import logo from "./logo.svg";
 import "./App.css";
 
-const BASE_URL = "https://fakestoreapi.herokuapp.com/products/";
+import { BASE_URL, findItemAndIndex } from "./constants";
+import ProductList from "./components/Product";
+import Button from "./components/Button";
+import Cart from "./components/Cart";
 
 class App extends React.Component {
   componentDidMount() {
@@ -64,10 +66,10 @@ class App extends React.Component {
     const cart = [...this.state.cart];
     const { index, foundItem } = findItemAndIndex(cart, id);
 
-    if(foundItem.quantity === 1) {
-      return
+    if (foundItem.quantity === 1) {
+      return;
     }
-    (foundItem.quantity)--
+    foundItem.quantity--;
 
     cart[index] = foundItem;
 
@@ -75,7 +77,7 @@ class App extends React.Component {
   }
 
   clearCart() {
-    this.setState({cart: []})
+    this.setState({ cart: [] });
   }
 
   render() {
@@ -87,14 +89,14 @@ class App extends React.Component {
           <h1>Something is wrong</h1>
         ) : (
           <div className="App">
-            <Button onClick={() => this.clearCart()} >Clear</Button>
+            <Button onClick={() => this.clearCart()}>Clear</Button>
             <Cart
               cart={cart}
               removeFromCart={this.removeFromCart}
               increaseQuantity={this.increaseQuantity}
               decreaseQuantity={this.decreaseQuantity}
             />
-            <ProductsList addToCart={this.addToCart} products={products} />{" "}
+            <ProductList addToCart={this.addToCart} products={products} />{" "}
           </div>
         )}
       </>
@@ -119,75 +121,5 @@ class App extends React.Component {
     console.log("unmounting...");
   }
 }
-
-const Product = ({
-  category,
-  description,
-  id,
-  image,
-  price,
-  title,
-  addToCart,
-}) => (
-  <div>
-    <h6>{title}</h6>
-    <p>{category}</p>
-    <p>{description}</p>
-    <p>{formatPrice(price)}</p>
-    <img src={image.replace('https://fakestoreapi.com/', 'https://fakestoreapi.herokuapp.com/')} alt={title} className="App-logo" />
-    <Button onClick={addToCart}>Add to Cart</Button>
-  </div>
-);
-
-const ProductsList = ({ products, addToCart }) =>
-  products ? (
-    products.map((item) => (
-      <Product addToCart={() => addToCart(item)} key={item.id} {...item} />
-    ))
-  ) : (
-    <Loading />
-  );
-
-const Loading = () => <img className="App-logo" src={logo} alt={logo} />;
-
-const Button = ({ onClick, children, quantity }) => (
-  <button disabled={quantity === 1} onClick={onClick}>{children}</button>
-);
-
-const Item = ({
-  title,
-  quantity,
-  removeFromCart,
-  id,
-  increaseQuantity,
-  decreaseQuantity,
-}) => (
-  <div>
-    <Button onClick={() => increaseQuantity(id)}>+</Button>
-    <div>
-      {title} quantity: {quantity}
-    </div>
-    <Button onClick={() => decreaseQuantity(id)} quantity={quantity}>-</Button>
-    <Button onClick={() => removeFromCart(id)}>Remove</Button>
-  </div>
-);
-
-const Cart = ({ cart, removeFromCart, increaseQuantity, decreaseQuantity }) =>
-  cart.map((item) => (
-    <Item
-      removeFromCart={removeFromCart}
-      increaseQuantity={increaseQuantity}
-      decreaseQuantity={decreaseQuantity}
-      {...item}
-    />
-  ));
-
-const formatPrice = (price) => `$${price}`;
-
-const findItemAndIndex = (array, id) => {
-  const foundItem = array.find((item) => item.id === id);
-  const index = array.findIndex((itemInCart) => itemInCart.id === id);
-  return { index, foundItem };
-};
 
 export default App;
